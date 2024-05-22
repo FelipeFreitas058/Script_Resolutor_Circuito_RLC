@@ -1,0 +1,51 @@
+R = 1;                                                  %Valor do resistor (Ω)
+L = 0.3;                                                %Valor do indutor (H)
+C = 0.0002;                                             %Valor do capacitor (F)
+q0 = 0.0024;                                            %Carga inicial no capacitor (C)
+i0 = 0;                                                 %Corrente inicial no circuito (A)
+
+t_min = 0;                                              %Tempo inicial da simulação (s)
+t_max = 2.5;                                            %Tempo final da simulação (s)
+
+Tensao = '--->';                                        %Esta definida na linha (41);
+
+
+int_tempo = [t_min, t_max];                             %Define o vetor do intervalo de tempo
+
+EDO_Carga = @(t, y) RLC_Carga(t,y,R,L,C);               %Salva a EDO do circuito definida na função RLC_Carga
+opcoes = odeset('OutputFcn','odePlot');                 %Seta configurações para que seja possível vizualizar o numero de interações
+
+[t, y] = ode45(EDO_Carga,int_tempo,[q0, i0]);           %Calcula a solução para a EDO
+
+numero_interacoes = length(t);                          %Calcula o numero de interações realizadas
+passos = diff(t);                                       %Calcula os tamanhos dos passos para cada interação
+numero_interacoes                                       %Mostra o numero de interações realizadas
+passos                                                  %Mostra os tamanhos dos passos de cada interação
+
+   
+subplot(2,1,1);                                         %Define a localização do primeiro gráfico (Curva da carga no capacitor)
+plot(t,y(:,1), 'b');                                    %Plota a curva da carga no capacitor
+xlabel('Tempo (s)');                                    %Adiciona a legenda "Tempo (s)" no eixo x
+ylabel('Carga (C)');                                    %Adiciona a legenda "Carga (C)" no eixo y
+title('Carga no capacitor');                            %Adiciona o título "Carga no capacitor" ao gráfico
+legend('Curva da carga no capacitor');                  %Adiciona a legenda "Curva da carga no capacitor" ao gráfico
+grid on;                                                %Habilita o plano de fundo do gráfico com grade
+
+subplot(2,1,2);                                         %Define a localização do segundo gráfico (Curva da corrente no circuito)
+plot(t,y(:,2),'r');                                     %Plota a curva da corrente no circuito
+xlabel('Tempo (s)');                                    %Adiciona a legenda "Tempo (s)" no eixo x
+ylabel('Corrente (A)');                                 %Adiciona a legenda "Corrente (A)" no eixo y
+title('Corrente no circuito');                          %Adiciona o título "Corrente no circuito" ao gráfico
+legend('Curva da corrente no circuito');                %Adiciona a legenda "Curva da corrente no circuito" ao gráfico
+grid on;
+
+function dqdt = RLC_Carga(t,y,R,L,C)                    %Cria a função RLC_Carga
+V = Tensao_no_circuito(t);                              %Calcula a tensão no tempo t atravez da função Tensao_no_circuito
+dqdt = zeros(2,1);                                      %Cria a variável onde sera guardado o sistema de EDO's
+dqdt(1) = y(2);                                         %Salva no primeiro elemento do vetor, a primeira EDO do sistema
+dqdt(2) = -(R/L)*y(2) - (1/(L*C))*y(1) + V/L;           %Salva no segundo elemento do vetor, a segunda EDO do sistema
+end
+
+function V = Tensao_no_circuito (t)                     %Cria a função para definir a tensão no circuito
+    V = 0;                                              %Tensão no circuito (V) 
+end

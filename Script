@@ -7,7 +7,7 @@ i0 = 0;                                                 %Corrente inicial no cir
 t_min = 0;                                              %Tempo inicial da simulação (s)
 t_max = 2.5;                                            %Tempo final da simulação (s)
 
-Tensao = '--->';                                        %Esta definida na linha (41);
+Tensao = '--->';                                        %Esta definida na linha (50);
 
 
 int_tempo = [t_min, t_max];                             %Define o vetor do intervalo de tempo
